@@ -28,7 +28,7 @@ const NavBar = () => {
             <NavMenu className={`${styles.navMenu} ${isActive ? styles.active : ''}`}>
             <NavLink to='/' className={`${styles.navLink}`} onClick={removeActive} >Home</NavLink>
             <NavLink to='/about-me' className={`${styles.navLink}`} onClick={removeActive} >About Me</NavLink>
-
+            <NavLink to='/resume' className={`${styles.navLink}`} onClick={removeActive} >Resume</NavLink>
             </NavMenu>
             <div className={`${styles.hamburger} ${isActive ? styles.active : ''}`}  onClick={toggleActiveClass}>
                 <span className={`${styles.bar}`}></span>
