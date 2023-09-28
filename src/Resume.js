@@ -1,6 +1,7 @@
 import React from "react";
 import "./App.css";
 import me from './images/me.png';
+import Box from './Box';
 
 const Resume = () => {
     return (
@@ -23,7 +24,7 @@ const Resume = () => {
                 </div>
             </div>
             <div className="resume-content">
-                some content
+                <Box data="asdfasdf"/>
             </div>
         </div>
     )

@@ -6,7 +6,7 @@
 
 .side-nav {
   width:13em;
-  height:48.5em;
+  height:43em;
   background-color:rgb(57, 43, 86);
   display: inline-block;
 }
@@ -81,6 +81,13 @@
   }
 }
 
+
+.box-class {
+  border: solid .1em rgb(153, 160, 166);
+  border-radius: .25em;
+  padding:1em;
+  margin:1em;
+}
 
 #me-image {
   border-radius: .5em;
