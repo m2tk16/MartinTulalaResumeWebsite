@@ -1,13 +1,23 @@
+.body {
+  display: inline-block;
+  width:auto;
+}
+
+
 .side-nav {
   width:13em;
+  height:auto;
   padding-bottom:2em;
   background-color:rgb(57, 43, 86);
   display: inline-block;
+  box-shadow: 0 6px 10px 4px rgba(0, 0, 0, 0.3), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
 }
 
 .resume-content {
   display:inline-block;
+  position:absolute;
   font-family:'Calibri';
+  padding:1em;
 }
 
 #first-name {
@@ -32,6 +42,10 @@
 
 }
 
+.education-box-container {
+  display: inline-block;
+}
+
 #resume-side-header {
   text-align: left;
   color:rgb(152, 190, 224);
@@ -51,6 +65,7 @@
   width:.5em;
   display: inline-block;
 }
+
 
 #side-level-one-color {
   background-color:rgb(187, 234, 237);
@@ -75,30 +90,46 @@
 }
 
 
-.school-box {
+.education-box {
   border-top-right-radius: .75em;
   font-size: 12px;
   padding-right:1em;
   border-left: solid .15em rgb(57, 43, 86);
 }
 
-.school-box-wrapper {
-  padding:.5em
+.education-box-wrapper {
+  padding:.5em;
+}
 
+.education-grouper {
+  display: inline-block;
+}
+
+.education-grouper.left {
+  display: inline-block;
+  padding-right:1em;
+}
+.education-grouper.right {
+  display: inline-block;
+  
+  padding-top:1em;
+  width: 30em;
 }
 
 .education-title {
   text-align:left;
+  display:inline-block;
   padding-left:.5em;
+  font-size:1.5em;
 }
 
-.school-box.header {
+.education-box.header {
   background-color: rgb(57, 43, 86);
   color:rgb(255, 255, 255);
   font-weight: bold;
 }
 
-.school-box.row{
+.education-box.row{
   text-align:left;
   padding-left:2em;
 

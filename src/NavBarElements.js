@@ -9,7 +9,8 @@ export const Nav = styled.nav`
     justify-content: space-between;
     align-items: center;
     gap: 40px;
-    min-height: 20px;
+    min-height: 10px;
+    box-shadow: 0 6px 10px 4px rgba(0, 0, 0, 0.3), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
 
 `;
   
@@ -17,7 +18,7 @@ export const NavLink = styled(Link)`
     text-decoration: none;
     background-color: #b6cde0;
     color: #000;
-    font-size: 18px;
+    font-size: 16px;
     
 `;
   
@@ -25,10 +26,10 @@ export const NavLink = styled(Link)`
 export const NavMenu = styled.div`
     background-color: #b6cde0;
     color: #000;
-    padding: 10px 20px;
+    padding: 5px 5px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 40px;
-    min-height: 25px;
+    min-height: 10px;
 `;
