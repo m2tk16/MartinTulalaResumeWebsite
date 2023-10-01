@@ -1,13 +1,29 @@
-import React from "react";
+import React, { useEffect, useState} from "react";
 import "./App.css";
 import me from './images/me.png';
-import Box from './Box';
 
 const Resume = () => {
+    const [history, setHistory] = useState([]);
+
+   
+    useEffect(() => {
+        const fetchJobHistory = async () => {
+            // Need to give permissoin to url
+            const response = await fetch('https://7wrtgtu4c8.execute-api.us-east-1.amazonaws.com/default/getSchoolHistory');
+            const data = await response.json();
+            setHistory(data.Items)
+            console.log(data.Items);
+            return data.Items
+        };
+        fetchJobHistory()
+    }, []);
+   
+
+
     return (
         <div className="body">
             <div className="side-nav">
-                <img src={me} id="me-image" width={175} height={175}></img>
+                <img src={me} alt="me" id="me-image" width={175} height={175}></img>
                 <br></br>
                 <div className="resume-content-wrapper">
                     <div id="first-name">Martin</div>
@@ -24,7 +40,20 @@ const Resume = () => {
                 </div>
             </div>
             <div className="resume-content">
-                <Box data="asdfasdf"/>
+                <div className="school-box-conatiner">
+                    <div className="education-title">
+                        Education
+                    </div>
+                    {history.map((row) => {
+                        return (
+                            <div className="school-box-wrapper">
+                                <div className="school-box header">{row.start_year}{" - "}{row.end_year}</div>
+                                <div className="school-box row"><b>{row.major}</b></div>
+                                <div className="school-box row">{row.school}</div>
+                            </div>
+                        )
+                    })}
+                </div>
             </div>
         </div>
     )

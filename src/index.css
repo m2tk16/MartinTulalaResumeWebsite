@@ -1,18 +1,12 @@
-.body {
-  display: inline-block;
-  width:auto;
-}
-
-
 .side-nav {
   width:13em;
-  height:43em;
+  padding-bottom:2em;
   background-color:rgb(57, 43, 86);
   display: inline-block;
 }
 
 .resume-content {
-  display: inline-block;
+  display:inline-block;
   font-family:'Calibri';
 }
 
@@ -46,7 +40,6 @@
 }
 
 .resume-content-wrapper {
-  text-align: center;
   padding:0 3em 0 3em;
 }
 
@@ -82,11 +75,33 @@
 }
 
 
-.box-class {
-  border: solid .1em rgb(153, 160, 166);
-  border-radius: .25em;
-  padding:1em;
-  margin:1em;
+.school-box {
+  border-top-right-radius: .75em;
+  font-size: 12px;
+  padding-right:1em;
+  border-left: solid .15em rgb(57, 43, 86);
+}
+
+.school-box-wrapper {
+  padding:.5em
+
+}
+
+.education-title {
+  text-align:left;
+  padding-left:.5em;
+}
+
+.school-box.header {
+  background-color: rgb(57, 43, 86);
+  color:rgb(255, 255, 255);
+  font-weight: bold;
+}
+
+.school-box.row{
+  text-align:left;
+  padding-left:2em;
+
 }
 
 #me-image {
