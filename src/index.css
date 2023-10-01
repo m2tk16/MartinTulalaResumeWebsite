@@ -5,7 +5,7 @@
 
 
 .side-nav {
-  width:13em;
+  width:10.25em;
   height:auto;
   padding-bottom:2em;
   background-color:rgb(57, 43, 86);
@@ -14,7 +14,14 @@
 }
 
 .resume-content {
-  display:inline-block;
+  display:inline-flex;
+  position:absolute;
+  font-family:'Calibri';
+  padding:1em;
+}
+
+.job-history-content {
+  display:inline-flex;
   position:absolute;
   font-family:'Calibri';
   padding:1em;
@@ -42,9 +49,8 @@
 
 }
 
-.education-box-container {
-  display: inline-block;
-}
+
+
 
 #resume-side-header {
   text-align: left;
@@ -54,7 +60,7 @@
 }
 
 .resume-content-wrapper {
-  padding:0 3em 0 3em;
+  padding:0 2em 0 2em;
 }
 
 .resume-side-spacer {
@@ -135,6 +141,57 @@
 
 }
 
+
+
+.job-history-box {
+  border-top-right-radius: .75em;
+  font-size: 12px;
+  padding-right:1em;
+  border-left: solid .15em rgb(57, 43, 86);
+}
+
+.job-history-box-wrapper {
+  padding:.5em;
+}
+
+.job-history-grouper {
+  display: inline-block;
+}
+
+.job-history-grouper.left {
+  display: inline-block;
+  padding-right:1em;
+}
+.job-history-grouper.right {
+  display: inline-block;
+  
+  padding-top:1em;
+  width: 30em;
+}
+
+.job-history-title {
+  text-align:left;
+  display:inline-block;
+  padding-left:.5em;
+  font-size:1.5em;
+}
+
+.job-history-box.header {
+  background-color: rgb(57, 43, 86);
+  color:rgb(255, 255, 255);
+  font-weight: bold;
+}
+
+.job-history-box.row{
+  text-align:left;
+  padding-left:2em;
+
+}
+
+.resume-body {
+  display: inline-block;
+}
+
 #me-image {
   border-radius: .5em;
   border: solid .05em rgb(152, 190, 224);
@@ -142,4 +199,8 @@
   margin-left:1em;
   -webkit-transition: width 1s, height 1s;
   transition: width 1s, height 1s;
+}
+
+.side-component-column {
+  display: inline-block;
 }

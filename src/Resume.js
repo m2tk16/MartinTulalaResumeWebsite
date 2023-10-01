@@ -1,6 +1,7 @@
 import React, { useEffect, useState} from "react";
 import "./App.css";
 import Education from './Education';
+import JobHistory from './JobHistory';
 import SideNavResume from './SideNavResume';
 
 
@@ -19,8 +20,10 @@ const Resume = () => {
     }, []);
 
     return (
-        <div className="body">
+        <div className="resume-body">
             <SideNavResume />
+            <JobHistory education={education} />
+            <div></div>
             <Education education={education} />
         </div>
     )
