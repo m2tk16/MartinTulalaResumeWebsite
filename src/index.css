@@ -88,7 +88,7 @@
   height:48.5em;
 }
 /* Responsive layout - makes the two columns/boxes stack on top of each other instead of next to each other, on small screens */
-@media (max-width: 600px) {
+@media (max-width: 1200px) {
   nav, article {
     width: 100%;
     height: auto;
