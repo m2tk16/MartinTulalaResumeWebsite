@@ -22,8 +22,10 @@ const Resume = () => {
     return (
         <div className="resume-body">
             <SideNavResume />
-            <JobHistory education={education} />
-            <Education education={education} />
+            <div className="resume-wrapper">
+                <JobHistory education={education} />
+                <Education education={education} />
+            </div>
         </div>
     )
 };

@@ -1,28 +1,32 @@
 .body {
   display: inline-block;
-  width:auto;
+  width:600px;
 }
 
+.resume-body{
+  display: inline-block;
+  position: absolute;
+}
 
 .side-nav {
   width:10.25em;
   height:auto;
+  display: inline-block;
   padding-bottom:2em;
   background-color:rgb(57, 43, 86);
-  display: inline-block;
   box-shadow: 0 6px 10px 4px rgba(0, 0, 0, 0.3), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
 }
 
 .resume-content {
   display:inline-flex;
-  position:absolute;
+  position:relative;
   font-family:'Calibri';
   padding:1em;
 }
 
 .job-history-content {
   display:inline-flex;
-  position:absolute;
+  position:relative;
   font-family:'Calibri';
   padding:1em;
 }
@@ -88,7 +92,7 @@
   height:48.5em;
 }
 /* Responsive layout - makes the two columns/boxes stack on top of each other instead of next to each other, on small screens */
-@media (max-width: 1200px) {
+@media (max-width: 600px) {
   nav, article {
     width: 100%;
     height: auto;
@@ -107,19 +111,18 @@
   padding:.5em;
 }
 
-.education-grouper {
+.resume-wrapper {
   display: inline-block;
+  width:800px;
+  position: absolute;
 }
 
 .education-grouper.left {
-  display: inline-block;
   padding-right:1em;
 }
 .education-grouper.right {
-  display: inline-block;
-  
   padding-top:1em;
-  width: 30em;
+  width: 20em;
 }
 
 .education-title {
@@ -133,6 +136,7 @@
   background-color: rgb(57, 43, 86);
   color:rgb(255, 255, 255);
   font-weight: bold;
+  width:10em;
 }
 
 .education-box.row{
@@ -154,12 +158,14 @@
   padding:.5em;
 }
 
-.job-history-grouper {
-  display: inline-block;
+.job-history-box.experience {
+  width:22em;
+  background-color: rgb(57, 43, 86);
+  color:rgb(255, 255, 255);
+  font-weight: bold;
 }
 
 .job-history-grouper.left {
-  display: inline-block;
   padding-right:1em;
 }
 .job-history-grouper.right {
@@ -176,10 +182,18 @@
   font-size:1.5em;
 }
 
+.education-box.experience {
+  width:22em;
+  background-color: rgb(57, 43, 86);
+  color:rgb(255, 255, 255);
+  font-weight: bold;
+}
+
 .job-history-box.header {
   background-color: rgb(57, 43, 86);
   color:rgb(255, 255, 255);
   font-weight: bold;
+  width:10em;
 }
 
 .job-history-box.row{
@@ -188,9 +202,7 @@
 
 }
 
-.resume-body {
-  display: inline-block;
-}
+
 
 #me-image {
   border-radius: .5em;

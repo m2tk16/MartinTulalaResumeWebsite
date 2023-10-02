@@ -21,7 +21,7 @@ const JobHistory = (props) => {
                         )
                     })}
                     <div className="job-history-grouper right">
-                        <div className="job-history-box header">{"Experience"}</div>
+                        <div className="job-history-box experience">{"Experience"}</div>
                         <div className="job-history-box row">
                             {"After graduating from Pemberton in 2006, I attended a community college. While a degree was never earned, the fundamentals were learned."}
                         </div>

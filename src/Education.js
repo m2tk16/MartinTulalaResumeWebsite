@@ -20,7 +20,7 @@ const Education = (props) => {
                         )
                     })}
                     <div className="education-grouper right">
-                        <div className="education-box header">{"Experience"}</div>
+                        <div className="education-box experience">{"Experience"}</div>
                         <div className="education-box row">
                             {"After graduating from Pemberton in 2006, I attended a community college. While a degree was never earned, the fundamentals were learned."}
                         </div>
