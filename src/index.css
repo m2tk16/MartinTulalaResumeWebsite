@@ -119,10 +119,11 @@
 
 .education-grouper.left {
   padding-right:1em;
+  width: 15em;
 }
 .education-grouper.right {
   padding-top:1em;
-  width: 20em;
+  width: 15em;
 }
 
 .education-title {
@@ -167,12 +168,13 @@
 
 .job-history-grouper.left {
   padding-right:1em;
+  width:15em;
 }
 .job-history-grouper.right {
   display: inline-block;
   
   padding-top:1em;
-  width: 30em;
+  width:15em;
 }
 
 .job-history-title {
@@ -193,7 +195,7 @@
   background-color: rgb(57, 43, 86);
   color:rgb(255, 255, 255);
   font-weight: bold;
-  width:10em;
+  width:14em;
 }
 
 .job-history-box.row{

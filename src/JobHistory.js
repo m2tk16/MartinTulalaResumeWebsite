@@ -10,20 +10,20 @@ const JobHistory = (props) => {
                     Job History
                 </div><hr className="hr"></hr>
 
-                <div className="education-box-wrapper">
-                    {props.education.map((row) => {
+                <div className="job-history-box-wrapper">
+                    {props.jobHistory.map((row) => {
                         return (
                             <div className="job-history-grouper left">
-                                <div className="job-history-box header">{row.start_year}{" - "}{row.end_year}</div>
-                                <div className="job-history-box row"><b>{row.major}</b></div>
-                                <div className="job-history-box row">{row.school}</div>
+                                <div className="job-history-box header">{row.business_title}</div>
+                                <div className="job-history-box row"><b>{row.start_date}</b></div>
+                                <div className="job-history-box row">{row.end_date}</div>
                             </div>
                         )
                     })}
                     <div className="job-history-grouper right">
                         <div className="job-history-box experience">{"Experience"}</div>
                         <div className="job-history-box row">
-                            {"After graduating from Pemberton in 2006, I attended a community college. While a degree was never earned, the fundamentals were learned."}
+                            {"After starting Aamazon in the summer of 2014, I was able to learn the fundamental basic about warehouseing. During my tenure at amazon of almost 10 years, I have learned how to understand, analaysize and create comprehensive visuals and data taylored to the business needs"}
                         </div>
                     </div>
                 </div>
