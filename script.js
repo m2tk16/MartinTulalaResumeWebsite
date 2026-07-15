@@ -54,6 +54,13 @@ document.querySelectorAll('img[data-fallback]').forEach((image) => {
 document.querySelector('[data-print]')?.addEventListener('click', () => window.print());
 document.querySelector('[data-year]').textContent = new Date().getFullYear();
 
+const today = new Date();
+const amazonAnniversary = new Date(today.getFullYear(), 6, 14);
+const amazonYears = today.getFullYear() - 2014 - (today < amazonAnniversary ? 1 : 0);
+document.querySelectorAll('[data-amazon-years]').forEach((item) => {
+  item.textContent = amazonYears;
+});
+
 document.querySelector('#contact-form')?.addEventListener('submit', (event) => {
   event.preventDefault();
   const form = event.currentTarget;
@@ -61,5 +68,5 @@ document.querySelector('#contact-form')?.addEventListener('submit', (event) => {
   const subject = encodeURIComponent(`Portfolio inquiry from ${data.get('name')}`);
   const body = encodeURIComponent(`${data.get('message')}\n\nFrom: ${data.get('name')} (${data.get('email')})`);
   form.querySelector('.form-note').textContent = 'Opening your email app…';
-  window.location.href = `mailto:martin.tulala@gmail.com?subject=${subject}&body=${body}`;
+  window.location.href = `mailto:m2tk16@gmail.com?subject=${subject}&body=${body}`;
 });
