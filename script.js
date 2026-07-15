@@ -60,6 +60,14 @@ const amazonYears = today.getFullYear() - 2014 - (today < amazonAnniversary ? 1 
 document.querySelectorAll('[data-amazon-years]').forEach((item) => {
   item.textContent = amazonYears;
 });
+document.querySelector('[data-count="amazon"]')?.replaceChildren(String(amazonYears));
+
+if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  window.addEventListener('pointermove', (event) => {
+    document.documentElement.style.setProperty('--mouse-x', `${(event.clientX / window.innerWidth) * 100}%`);
+    document.documentElement.style.setProperty('--mouse-y', `${(event.clientY / window.innerHeight) * 100}%`);
+  }, { passive: true });
+}
 
 document.querySelector('#contact-form')?.addEventListener('submit', (event) => {
   event.preventDefault();
