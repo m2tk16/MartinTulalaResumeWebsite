@@ -67,6 +67,7 @@ document.querySelector('#contact-form')?.addEventListener('submit', (event) => {
   const data = new FormData(form);
   const subject = encodeURIComponent(`Portfolio inquiry from ${data.get('name')}`);
   const body = encodeURIComponent(`${data.get('message')}\n\nFrom: ${data.get('name')} (${data.get('email')})`);
+  const contactAddress = ['m2tk16', ['gmail', 'com'].join('.')].join('@');
   form.querySelector('.form-note').textContent = 'Opening your email app…';
-  window.location.href = `mailto:m2tk16@gmail.com?subject=${subject}&body=${body}`;
+  window.location.href = `mailto:${contactAddress}?subject=${subject}&body=${body}`;
 });

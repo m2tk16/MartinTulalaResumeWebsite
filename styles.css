@@ -128,6 +128,7 @@ img.is-missing + .image-fallback { display: flex; }
 .company-mark img { width: 100%; height: 100%; object-fit: contain; }
 .role-line { display: flex; align-items: baseline; justify-content: space-between; gap: 18px; }
 .role-line h3 { margin: 0; font-size: 1.15rem; }
+.role-line h3 em { display: inline-block; margin-left: 7px; color: #bd76ff; font-size: .66rem; font-style: normal; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
 .role-line span, .company { color: var(--muted); font-size: 13px; }
 .company { margin: 4px 0 12px; }
 .timeline-card ul { margin: 0; padding-left: 19px; color: #c4ceda; font-size: 14px; }
