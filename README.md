@@ -6,8 +6,8 @@ A dependency-free, responsive portfolio designed for AWS Amplify Hosting.
 
 Save the two image files into `assets/` using these exact names:
 
-- `martin-portrait.jpg`
-- `loki.jpg`
+- `martin-portrait.png`
+- `loki.png`
 
 The site includes intentional branded fallbacks until those files are present.
 
