@@ -5,13 +5,46 @@ Parameters:
   ContactEmail:
     Type: String
     Default: m2tk16@gmail.com
-    Description: Verified SES sender and private recipient for portfolio messages.
+    Description: Private recipient for portfolio messages.
+  SendingDomain:
+    Type: String
+    Default: martintulala.com
+    Description: Domain authenticated with SES for portfolio email.
+  SenderEmail:
+    Type: String
+    Default: portfolio@martintulala.com
+    Description: Authenticated From address shown on portfolio messages.
+  HostedZoneId:
+    Type: String
+    Default: Z04762226PKXRMSTXY2E
+    Description: Route 53 public hosted zone for the sending domain.
   AllowedOrigins:
     Type: CommaDelimitedList
     Default: https://martintulala.com,https://www.martintulala.com,https://main.dnmelfs839aky.amplifyapp.com
     Description: Browser origins permitted to submit the contact form.
 
 Resources:
+  EmailAuthenticationRecords:
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      RecordSets:
+        - Name: !Sub mail.${SendingDomain}
+          Type: MX
+          TTL: 300
+          ResourceRecords:
+            - 10 feedback-smtp.us-east-1.amazonses.com
+        - Name: !Sub mail.${SendingDomain}
+          Type: TXT
+          TTL: 300
+          ResourceRecords:
+            - '"v=spf1 include:amazonses.com ~all"'
+        - Name: !Sub _dmarc.${SendingDomain}
+          Type: TXT
+          TTL: 300
+          ResourceRecords:
+            - '"v=DMARC1; p=none; pct=100; adkim=r; aspf=r"'
+
   ContactFunctionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -35,7 +68,9 @@ Resources:
                 Resource: arn:aws:logs:*:*:*
               - Effect: Allow
                 Action: ses:SendEmail
-                Resource: !Sub arn:${AWS::Partition}:ses:${AWS::Region}:${AWS::AccountId}:identity/${ContactEmail}
+                Resource:
+                  - !Sub arn:${AWS::Partition}:ses:${AWS::Region}:${AWS::AccountId}:identity/${SendingDomain}
+                  - !Sub arn:${AWS::Partition}:ses:${AWS::Region}:${AWS::AccountId}:identity/${ContactEmail}
 
   ContactFunction:
     Type: AWS::Lambda::Function
@@ -49,6 +84,7 @@ Resources:
       Environment:
         Variables:
           CONTACT_EMAIL: !Ref ContactEmail
+          SENDER_EMAIL: !Ref SenderEmail
           ALLOWED_ORIGINS: !Join [',', !Ref AllowedOrigins]
       Code:
         ZipFile: |
@@ -56,6 +92,7 @@ Resources:
 
           const ses = new SESv2Client({});
           const contactEmail = process.env.CONTACT_EMAIL;
+          const senderEmail = process.env.SENDER_EMAIL;
           const allowedOrigins = new Set(
             (process.env.ALLOWED_ORIGINS || '')
               .split(',')
@@ -73,7 +110,14 @@ Resources:
           });
 
           const clean = (value) => typeof value === 'string' ? value.trim() : '';
-          const validEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+          const validEmail = (value) => /^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-z0-9-]+(?:\.[a-z0-9-]+)+$/i.test(value);
+          const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+          })[character]);
 
           exports.handler = async (event) => {
             const origin = event.headers?.origin || event.headers?.Origin || '';
@@ -107,25 +151,58 @@ Resources:
             }
 
             const safeName = name.replace(/[\r\n]+/g, ' ').slice(0, 100);
-            const subject = `Portfolio inquiry from ${safeName}`;
-            const body = [
+            const submittedAt = new Date().toISOString();
+            const subject = `New portfolio inquiry from ${safeName}`;
+            const textBody = [
+              'NEW PORTFOLIO INQUIRY',
+              '',
               message,
               '',
               '---',
               `Name: ${name}`,
               `Email: ${email}`,
-              `Submitted: ${new Date().toISOString()}`
+              `Submitted: ${submittedAt}`,
+              '',
+              `Reply directly to this email to contact ${name}.`
             ].join('\n');
+            const htmlBody = `<!doctype html>
+              <html lang="en">
+                <body style="margin:0;padding:0;background:#070d14;color:#dbe4ef;font-family:Arial,Helvetica,sans-serif;">
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#070d14;padding:32px 12px;">
+                    <tr><td align="center">
+                      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:620px;background:#101925;border:1px solid #263343;border-radius:18px;overflow:hidden;">
+                        <tr><td style="padding:28px 32px;background:#0b121c;border-bottom:1px solid #263343;">
+                          <table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>
+                            <td><div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#72b4ff;">Martin Tulala</div><div style="margin-top:7px;font-size:24px;line-height:1.25;font-weight:700;color:#ffffff;">New portfolio inquiry</div></td>
+                            <td align="right" valign="top"><span style="display:inline-block;padding:8px 10px;border-radius:9px;background:#172334;color:#8fbfff;font-size:12px;font-weight:700;">MT</span></td>
+                          </tr></table>
+                        </td></tr>
+                        <tr><td style="padding:30px 32px;">
+                          <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#8190a3;">Message from</div>
+                          <div style="margin-top:7px;font-size:20px;font-weight:700;color:#ffffff;">${escapeHtml(safeName)}</div>
+                          <a href="mailto:${escapeHtml(email)}" style="display:inline-block;margin-top:5px;color:#72b4ff;text-decoration:none;font-size:14px;">${escapeHtml(email)}</a>
+                          <div style="margin:24px 0;padding:22px;border-radius:12px;background:#0a111a;border:1px solid #263343;color:#dbe4ef;font-size:15px;line-height:1.65;white-space:pre-wrap;word-break:break-word;">${escapeHtml(message)}</div>
+                          <a href="mailto:${escapeHtml(email)}" style="display:inline-block;padding:12px 18px;border-radius:9px;background:#4d9fff;color:#06101c;text-decoration:none;font-size:14px;font-weight:700;">Reply to ${escapeHtml(safeName)}</a>
+                        </td></tr>
+                        <tr><td style="padding:18px 32px;border-top:1px solid #263343;background:#0b121c;color:#718096;font-size:11px;line-height:1.6;">Submitted ${escapeHtml(submittedAt)} through the secure contact form at martintulala.com.</td></tr>
+                      </table>
+                    </td></tr>
+                  </table>
+                </body>
+              </html>`;
 
             try {
               await ses.send(new SendEmailCommand({
-                FromEmailAddress: contactEmail,
+                FromEmailAddress: `Martin Tulala Portfolio <${senderEmail}>`,
                 Destination: { ToAddresses: [contactEmail] },
                 ReplyToAddresses: [email],
                 Content: {
                   Simple: {
                     Subject: { Data: subject, Charset: 'UTF-8' },
-                    Body: { Text: { Data: body, Charset: 'UTF-8' } }
+                    Body: {
+                      Text: { Data: textBody, Charset: 'UTF-8' },
+                      Html: { Data: htmlBody, Charset: 'UTF-8' }
+                    }
                   }
                 }
               }));
@@ -192,5 +269,8 @@ Outputs:
     Description: POST endpoint used by the portfolio contact form.
     Value: !Sub https://${ContactApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/contact
   SesIdentity:
-    Description: Email identity that must be verified before delivery succeeds.
-    Value: !Ref ContactEmail
+    Description: DKIM-authenticated domain used to send portfolio email.
+    Value: !Ref SendingDomain
+  SenderEmail:
+    Description: From address shown on portfolio messages.
+    Value: !Ref SenderEmail
