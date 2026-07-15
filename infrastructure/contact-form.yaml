@@ -1,0 +1,196 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Serverless contact form for martintulala.com
+
+Parameters:
+  ContactEmail:
+    Type: String
+    Default: m2tk16@gmail.com
+    Description: Verified SES sender and private recipient for portfolio messages.
+  AllowedOrigins:
+    Type: CommaDelimitedList
+    Default: https://martintulala.com,https://www.martintulala.com,https://main.dnmelfs839aky.amplifyapp.com
+    Description: Browser origins permitted to submit the contact form.
+
+Resources:
+  ContactFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: ContactFunctionPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: arn:aws:logs:*:*:*
+              - Effect: Allow
+                Action: ses:SendEmail
+                Resource: !Sub arn:${AWS::Partition}:ses:${AWS::Region}:${AWS::AccountId}:identity/${ContactEmail}
+
+  ContactFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: Validates portfolio contact submissions and delivers them through SES.
+      Runtime: nodejs22.x
+      Handler: index.handler
+      Role: !GetAtt ContactFunctionRole.Arn
+      MemorySize: 128
+      Timeout: 10
+      Environment:
+        Variables:
+          CONTACT_EMAIL: !Ref ContactEmail
+          ALLOWED_ORIGINS: !Join [',', !Ref AllowedOrigins]
+      Code:
+        ZipFile: |
+          const { SESv2Client, SendEmailCommand } = require('@aws-sdk/client-sesv2');
+
+          const ses = new SESv2Client({});
+          const contactEmail = process.env.CONTACT_EMAIL;
+          const allowedOrigins = new Set(
+            (process.env.ALLOWED_ORIGINS || '')
+              .split(',')
+              .map((origin) => origin.trim())
+              .filter(Boolean)
+          );
+
+          const reply = (statusCode, payload) => ({
+            statusCode,
+            headers: {
+              'content-type': 'application/json; charset=utf-8',
+              'cache-control': 'no-store'
+            },
+            body: JSON.stringify(payload)
+          });
+
+          const clean = (value) => typeof value === 'string' ? value.trim() : '';
+          const validEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+          exports.handler = async (event) => {
+            const origin = event.headers?.origin || event.headers?.Origin || '';
+            if (!allowedOrigins.has(origin)) {
+              return reply(403, { message: 'Submission origin is not allowed.' });
+            }
+
+            let payload;
+            try {
+              payload = JSON.parse(event.body || '{}');
+            } catch {
+              return reply(400, { message: 'The request body must be valid JSON.' });
+            }
+
+            if (clean(payload.website)) {
+              return reply(200, { message: 'Thanks. Your message has been sent.' });
+            }
+
+            const name = clean(payload.name);
+            const email = clean(payload.email).toLowerCase();
+            const message = clean(payload.message);
+
+            if (name.length < 2 || name.length > 100) {
+              return reply(400, { message: 'Please enter a valid name.' });
+            }
+            if (email.length > 254 || !validEmail(email)) {
+              return reply(400, { message: 'Please enter a valid email address.' });
+            }
+            if (message.length < 10 || message.length > 5000) {
+              return reply(400, { message: 'Please enter a message between 10 and 5,000 characters.' });
+            }
+
+            const safeName = name.replace(/[\r\n]+/g, ' ').slice(0, 100);
+            const subject = `Portfolio inquiry from ${safeName}`;
+            const body = [
+              message,
+              '',
+              '---',
+              `Name: ${name}`,
+              `Email: ${email}`,
+              `Submitted: ${new Date().toISOString()}`
+            ].join('\n');
+
+            try {
+              await ses.send(new SendEmailCommand({
+                FromEmailAddress: contactEmail,
+                Destination: { ToAddresses: [contactEmail] },
+                ReplyToAddresses: [email],
+                Content: {
+                  Simple: {
+                    Subject: { Data: subject, Charset: 'UTF-8' },
+                    Body: { Text: { Data: body, Charset: 'UTF-8' } }
+                  }
+                }
+              }));
+              return reply(200, { message: 'Thanks. Your message has been sent.' });
+            } catch (error) {
+              console.error('SES delivery failed', {
+                name: error?.name,
+                message: error?.message
+              });
+              return reply(503, { message: 'Message delivery is temporarily unavailable. Please try again.' });
+            }
+          };
+
+  ContactApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: martin-tulala-contact-api
+      Description: Public contact endpoint for martintulala.com
+      ProtocolType: HTTP
+      CorsConfiguration:
+        AllowOrigins: !Ref AllowedOrigins
+        AllowMethods:
+          - POST
+          - OPTIONS
+        AllowHeaders:
+          - Content-Type
+        MaxAge: 600
+
+  ContactIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref ContactApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !GetAtt ContactFunction.Arn
+      PayloadFormatVersion: '2.0'
+
+  ContactRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref ContactApi
+      RouteKey: POST /contact
+      Target: !Sub integrations/${ContactIntegration}
+
+  ContactStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref ContactApi
+      StageName: $default
+      AutoDeploy: true
+      DefaultRouteSettings:
+        ThrottlingBurstLimit: 5
+        ThrottlingRateLimit: 1
+
+  ContactInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref ContactFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${ContactApi}/*/*/contact
+
+Outputs:
+  ContactApiEndpoint:
+    Description: POST endpoint used by the portfolio contact form.
+    Value: !Sub https://${ContactApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/contact
+  SesIdentity:
+    Description: Email identity that must be verified before delivery succeeds.
+    Value: !Ref ContactEmail

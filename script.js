@@ -69,13 +69,40 @@ if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
   }, { passive: true });
 }
 
-document.querySelector('#contact-form')?.addEventListener('submit', (event) => {
+const contactEndpoint = 'https://xxcq7kabwi.execute-api.us-east-1.amazonaws.com/contact';
+
+document.querySelector('#contact-form')?.addEventListener('submit', async (event) => {
   event.preventDefault();
   const form = event.currentTarget;
+  const button = form.querySelector('button[type="submit"]');
+  const note = form.querySelector('.form-note');
   const data = new FormData(form);
-  const subject = encodeURIComponent(`Portfolio inquiry from ${data.get('name')}`);
-  const body = encodeURIComponent(`${data.get('message')}\n\nFrom: ${data.get('name')} (${data.get('email')})`);
-  const contactAddress = ['m2tk16', ['gmail', 'com'].join('.')].join('@');
-  form.querySelector('.form-note').textContent = 'Preparing your message…';
-  window.location.href = `mailto:${contactAddress}?subject=${subject}&body=${body}`;
+
+  button.disabled = true;
+  note.classList.remove('is-success', 'is-error');
+  note.textContent = 'Sending your message…';
+
+  try {
+    const response = await fetch(contactEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: data.get('name'),
+        email: data.get('email'),
+        message: data.get('message'),
+        website: data.get('website')
+      })
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(result.message || 'Message delivery failed.');
+
+    form.reset();
+    note.classList.add('is-success');
+    note.textContent = result.message || 'Thanks. Your message has been sent.';
+  } catch (error) {
+    note.classList.add('is-error');
+    note.textContent = error.message || 'Message delivery is temporarily unavailable. Please try again.';
+  } finally {
+    button.disabled = false;
+  }
 });

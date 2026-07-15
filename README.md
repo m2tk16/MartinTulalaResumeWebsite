@@ -19,4 +19,4 @@ Open `index.html` directly in a browser. No install or build step is required.
 
 Connect Amplify Hosting to the GitHub repository and select the branch containing these files. Amplify will detect `amplify.yml` and publish the static site.
 
-The contact form opens the visitor's default email application. No backend is required.
+The contact form posts to an AWS HTTP API backed by Lambda and Amazon SES. The infrastructure is defined in `infrastructure/contact-form.yaml`; its SES email identity must remain verified in `us-east-1` for delivery to succeed.
