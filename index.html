@@ -159,10 +159,10 @@
 
           <article class="impact-story reveal">
             <div class="story-heading"><span>05</span><h3>Legacy Pipeline Simplification</h3></div>
-            <div class="story-section"><h4>Problem</h4><p>A legacy reporting ecosystem contained numerous independent jobs that were difficult to understand and maintain.</p></div>
-            <div class="story-section"><h4>Approach</h4><p>Analyzed dependencies and redesigned the architecture into a significantly simpler solution.</p></div>
-            <div class="story-outcome"><h4>Outcome</h4><ul><li>Reduced operational complexity</li><li>Simplified ownership</li><li>Improved maintainability</li></ul></div>
-            <ul class="tag-list"><li>Data Engineering</li><li>System Design</li><li>Process Improvement</li></ul>
+            <div class="story-section"><h4>Problem</h4><p>A legacy pipeline processed billions of rows through 35+ transforms and 35+ table loads. The roughly 70-job workflow took hours, cost more than necessary, and created frequent failure points.</p></div>
+            <div class="story-section"><h4>Approach</h4><p>After optimizing the existing system, determined that a fit-for-purpose rebuild with less granularity could provide the same decision value. Re-architected the workflow around Spark SQL, two load jobs, and a final ETLM transform/load.</p></div>
+            <div class="story-outcome"><h4>Outcome</h4><ul><li>Reduced the pipeline from roughly 70 jobs to 6</li><li>Cut total runtime to under one hour</li><li>Reduced failure points and operational overhead</li><li>Enabled five core businesses to identify where inventory was dwelling in the supply chain through QuickSight</li></ul></div>
+            <ul class="tag-list"><li>Spark SQL</li><li>ETLM</li><li>QuickSight</li><li>Data Architecture</li><li>Cost Optimization</li></ul>
           </article>
 
           <article class="impact-story reveal">
